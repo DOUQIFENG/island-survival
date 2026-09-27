@@ -1,6 +1,6 @@
 import {Connection} from './net.js';
 import {Input} from './input.js';
-import {Renderer} from '../render/renderer.js';
+import {Renderer3D as Renderer} from '../render/three-renderer.js';
 import {Effects,Audio} from '../render/effects.js';
 import {Interface} from '../ui/interface.js';
 import {project} from '../render/terrain.js';
@@ -13,4 +13,6 @@ class Game{
  frame(t){const dt=Math.min(.05,(t-this.last)/1000);this.last=t;this.input.update(t);if(this.self&&this.predicted){const input=this.input.vector();const water=isWater(terrain(this.self.x,this.self.y,this.self.z,this.seed));const speed=this.self.boat?4.6:water?1.25:input.run&&this.self.stamina>1?4.1:2.7;if(this.self.hp>0&&!this.self.boat){const x=this.predicted.x+input.x*speed*dt,y=this.predicted.y+input.y*speed*dt;if(terrain(x,y,this.self.z,this.seed)!=='wall'){this.predicted.x=x;this.predicted.y=y;}}this.predicted.x+=(this.self.x-this.predicted.x)*Math.min(1,dt*5);this.predicted.y+=(this.self.y-this.predicted.y)*Math.min(1,dt*5);}this.pings=this.pings.filter(p=>p.until>t);this.fx.update(dt);this.renderer.draw(t/1000,dt);requestAnimationFrame(v=>this.frame(v));}
 }
 new Game();
+
+
 
