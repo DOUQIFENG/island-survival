@@ -8,3 +8,10 @@ saves/
 *.zip
 .DS_Store
 Thumbs.db
+
+.tools/
+art-source/*.blend1
+
+
+# Local generation responses may include provider metadata or temporary URLs.
+output/imagegen/generation-response.json

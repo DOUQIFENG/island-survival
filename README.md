@@ -1,6 +1,6 @@
 # 雾海余生 · MISTBOUND
 
-浏览器 2.5D 多人合作荒岛生存游戏，当前为 0.2 可玩开发版。支持单人直接创建世界，也可邀请朋友进入同一房间（最多 8 人）。
+浏览器 3D 多人合作荒岛生存游戏，当前为 0.2 可玩开发版。支持单人直接创建世界，也可邀请朋友进入同一房间（最多 8 人）。
 
 ## 启动
 
@@ -32,3 +32,13 @@ npm start
 `shared/` 保存物品、世界与公共规则；`server/` 执行权威模拟；`public/core/`、`public/render/`、`public/ui/` 负责连接、画面和交互。运行 `npm test` 执行系统与真实 WebSocket 集成测试。
 
 详见 [架构说明](ARCHITECTURE.md) 与 [开发状态及未完成项](STATUS.md)。当前人物移动修复尚在进行，上传代码保留开发进度。
+
+
+## 3D 美术与角色预览
+
+- 启动后访问 `http://localhost:3000/character.html` 查看主角正面、侧面、背面，并切换站立与行走动画。
+- 游戏与预览共用 `public/assets/cinematic/survivor.glb`，建模源文件保存在 `art-source/`。
+- `tools/build-survivor.py` 与 `tools/build-coastal-assets.py` 为 Blender 建模导出脚本；本地 Blender 安装不包含在仓库中。
+- 角色采用骨骼蒙皮与 Idle / Walk 动画；当前仍为开发版美术，不代表参考作品的最终品质。
+- 中键拖动环视，滚轮缩放。测试命令：`npm test`。
+- `tools/generate-concept.mjs` 是可选的第三方付费图片接口脚本，游戏运行不需要它；只从环境变量 `IMAGE_API_KEY` 读取密钥，请勿提交密钥。

@@ -1,0 +1,11 @@
+import * as T from '/vendor/three.module.js';
+import {GLTFLoader} from '/vendor/loaders/GLTFLoader.js';
+import {clone} from '/vendor/utils/SkeletonUtils.js';
+const scene=new T.Scene();scene.background=new T.Color(0x162c37);
+const camera=new T.PerspectiveCamera(32,innerWidth/innerHeight,.1,100);camera.position.set(0,1.6,6);camera.lookAt(0,1,0);
+const renderer=new T.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;document.body.append(renderer.domElement);
+scene.add(new T.HemisphereLight(0xe2f4ff,0x65727a,2.5));const key=new T.DirectionalLight(0xffe6d0,3);key.position.set(-3,4,4);scene.add(key);const rim=new T.DirectionalLight(0x93d4ff,2);rim.position.set(3,2,-2);scene.add(rim);
+const gltf=await new GLTFLoader().loadAsync('/assets/cinematic/survivor.glb');const models=[];
+for(let i=0;i<3;i++){const model=clone(gltf.scene);model.position.x=(i-1)*1.38;model.rotation.y=[0,Math.PI/2,Math.PI][i];scene.add(model);const mixer=new T.AnimationMixer(model),actions={};for(const clip of gltf.animations){actions[clip.name]=mixer.clipAction(clip);actions[clip.name].play();actions[clip.name].setEffectiveWeight(clip.name==='Idle'?1:0);}models.push({mixer,actions});const pad=new T.Mesh(new T.CylinderGeometry(.43,.46,.035,64),new T.MeshStandardMaterial({color:0x36525b,roughness:1}));pad.position.set(model.position.x,-.02,0);scene.add(pad);}
+for(const mode of ['idle','walk'])document.getElementById(mode).onclick=()=>{for(const m of models){m.actions.Idle.setEffectiveWeight(mode==='idle'?1:0);m.actions.Walk.setEffectiveWeight(mode==='walk'?1:0);}document.body.dataset.motion=mode;};
+document.body.dataset.assets='ready';document.getElementById('status').textContent='已加载 · 骨骼绑定 / 站立与行走动画';const clock=new T.Clock();renderer.setAnimationLoop(()=>{const dt=clock.getDelta();models.forEach(m=>m.mixer.update(dt));renderer.render(scene,camera);});addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});

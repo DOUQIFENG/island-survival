@@ -13,6 +13,7 @@ test('real WebSocket solo host, 8 players, room limit, movement replication and 
  server=spawn(process.execPath,['server.js'],{cwd,env:{...process.env,PORT:String(port),SAVE_DIR:save},stdio:['ignore','pipe','pipe']});let output='';server.stdout.on('data',d=>output+=d);server.stderr.on('data',d=>output+=d);await wait(()=>output.includes('listening'));
  const page=await fetch(`http://127.0.0.1:${port}`);assert.equal(page.status,200);assert.ok((await page.text()).includes('自己开房'));
  const shared=await fetch(`http://127.0.0.1:${port}/shared/data.js`);assert.equal(shared.status,200);assert.match(shared.headers.get('content-type'),/javascript/);
+ for(const asset of ['palm','rock','ruin','shelter','survivor']){const r=await fetch(`http://127.0.0.1:${port}/assets/cinematic/${asset}.glb`);assert.equal(r.status,200);assert.match(r.headers.get('content-type'),/gltf-binary/);assert.equal(Buffer.from(await r.arrayBuffer()).toString('utf8',0,4),'glTF');}
  const host=await connect({create:true,name:'房主'});assert.equal(host.welcome.type,'welcome');const code=host.welcome.code;assert.equal(host.log.find(m=>m.type==='state').players.length,1);
  const peer=await connect({code,name:'队友'});assert.equal(peer.welcome.code,code);const initial=await wait(()=>peer.log.find(m=>m.type==='state'&&m.players.length===2));const start=initial.players.find(p=>p.id===host.welcome.id).x;
  host.ws.send(JSON.stringify({type:'input',x:1,y:0}));await wait(()=>peer.log.find(m=>m.type==='state'&&m.players.some(p=>p.id===host.welcome.id&&p.x>start+.4)));
